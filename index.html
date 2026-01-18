@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переходник ИОНА</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        /* Видео фон */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        #bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.9);
+        }
+
+        /* Затемнение для лучшей читаемости */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+            backdrop-filter: blur(5px);
+            z-index: -1;
+        }
+
+        /* Основной контент */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Заголовок */
+        .header {
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .username {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            font-weight: 300;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Контейнер кнопок */
+        .buttons-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* Стиль кнопок iOS Glassmorphism */
+        .glass-button {
+            padding: 22px 30px;
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 50%, 
+                rgba(255, 255, 255, 0) 100%);
+            border-radius: 18px;
+            z-index: -1;
+        }
+
+        /* Эффект наведения */
+        .glass-button:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-button:active {
+            transform: translateY(1px);
+            transition: transform 0.1s;
+        }
+
+        /* Иконки для кнопок (можно заменить на свои) */
+        .button-icon {
+            margin-right: 12px;
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+
+        /* Анимации */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .username {
+                font-size: 1.2rem;
+            }
+            
+            .glass-button {
+                padding: 20px;
+                font-size: 1.2rem;
+            }
+            
+            .buttons-container {
+                max-width: 320px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .buttons-container {
+                max-width: 280px;
+                gap: 15px;
+            }
+            
+            .glass-button {
+                padding: 18px;
+            }
+        }
+
+        /* Контроль звука */
+        .sound-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .sound-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sound-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
+        }
+    </style>
+    <!-- Иконки Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Видео фон -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline id="bg-video">
+            <!-- Указываем ваше видео -->
+            <source src="video.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+
+    <!-- Затемнение -->
+    <div class="overlay"></div>
+
+    <!-- Кнопка управления звуком -->
+    <div class="sound-control">
+        <button class="sound-btn" id="soundToggle">
+            <i class="fas fa-volume-mute"></i>
+        </button>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">ПЕРЕХОДНИК ИОНА</h1>
+            <p class="username">oxeowe.t.me</p>
+        </div>
+
+        <div class="buttons-container">
+            <!-- Кнопка TELEGRAM -->
+            <a href="https://t.me/owuxo" target="_blank" class="glass-button">
+                <span class="button-icon"><i class="fab fa-telegram"></i></span>
+                <span class="button-text">TELEGRAM</span>
+            </a>
+
+            <!-- Кнопка TOURNAMENT -->
+            <a href="https://t.me/ion_rog" target="_blank" class="glass-button">
+                <span class="button-icon"><i class="fas fa-trophy"></i></span>
+                <span class="button-text">TOURNAMENT</span>
+            </a>
+
+            <!-- Кнопка MANAGER -->
+            <a href="https://t.me/wexyowe" target="_blank" class="glass-button">
+                <span class="button-icon"><i class="fas fa-user-tie"></i></span>
+                <span class="button-text">MANAGER</span>
+            </a>
+
+            <!-- Кнопка DM -->
+            <a href="https://t.me/oxeowe" target="_blank" class="glass-button">
+                <span class="button-icon"><i class="fas fa-envelope"></i></span>
+                <span class="button-text">DM</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Управление звуком видео
+        const video = document.getElementById('bg-video');
+        const soundToggle = document.getElementById('soundToggle');
+        const soundIcon = soundToggle.querySelector('i');
+        
+        // Функция переключения звука
+        function toggleSound() {
+            if (video.muted) {
+                video.muted = false;
+                soundIcon.className = 'fas fa-volume-up';
+                soundToggle.title = 'Выключить звук';
+            } else {
+                video.muted = true;
+                soundIcon.className = 'fas fa-volume-mute';
+                soundToggle.title = 'Включить звук';
+            }
+        }
+        
+        // Обработчик клика по кнопке звука
+        soundToggle.addEventListener('click', toggleSound);
+        
+        // Автовоспроизведение с звуком (может не работать в некоторых браузерах без взаимодействия пользователя)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Попытка включить звук при первом клике по странице
+            document.body.addEventListener('click', function initAudio() {
+                if (video.muted) {
+                    video.muted = false;
+                    soundIcon.className = 'fas fa-volume-up';
+                }
+                document.body.removeEventListener('click', initAudio);
+            }, { once: true });
+        });
+        
+        // Плавное появление элементов
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.8s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
